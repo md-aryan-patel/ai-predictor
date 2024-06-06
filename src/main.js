@@ -1,17 +1,25 @@
-const { OpenAI } = require("openai");
-require("dotenv").config();
-
-const openai = new OpenAI({ apiKey: process.env.SECREAT_KEY });
+const {
+  getSMA,
+  getDEMA,
+  getRSI,
+  getCryptocurrencyQuotes,
+} = require("./api/data");
 
 const main = async () => {
-  const stream = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: "Say this is a test" }],
-    stream: true,
-  });
-  for await (const chunk of stream) {
-    process.stdout.write(chunk.choices[0]?.delta?.content || "");
-  }
+  const symbol = "ETH";
+  const smaResp = await getSMA("BTC");
+  const rsiResp = await getRSI("BTC");
+  const demaResp = await getDEMA("BTC");
+  const getccquotes = await getCryptocurrencyQuotes([symbol]);
+  const resp = getccquotes[symbol];
+
+  const volumeIn24hr = resp[0].quote.USD.volume_24h;
+  const marketCap = resp[0].quote.USD.market_cap;
+
+  console.log({ symbol, smaResp, rsiResp, demaResp, volumeIn24hr, marketCap });
 };
 
-main();
+main().catch((err) => {
+  console.log(err);
+  process.exitCode = 1;
+});

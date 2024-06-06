@@ -1,28 +1,137 @@
-const axois = require("axios");
+const axios = require("axios");
+const { genericResponse, delay } = require("../helper");
 require("dotenv").config();
 
+const delayTime = 5000;
+
+const taapiApi = axios.create({
+  baseURL: "https://api.taapi.io",
+});
+
 const cmcApi = axios.create({
-  baseURL: "https://pro-api.coinmarketcap.com",
+  baseURL: "https://pro-api.coinmarketcap.com/v2",
   headers: {
     "X-CMC_PRO_API_KEY": process.env.CMC_KEY,
   },
 });
 
-const getAssetData = async () => {
+const getSMA = async (tokenSymbol) => {
+  const symbol = tokenSymbol + "/USDT";
   try {
-    const response = await cmcApi.get("/v2/cryptocurrency/quotes/latest", {
+    const response = await taapiApi.get("/sma", {
       params: {
-        slug: "bitcoin",
-        skip_cache: true,
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: "1h",
       },
     });
-
-    const { data } = response;
-    // Handle the API response data
-    console.log(data.data.quote.bitcoin.price);
+    await delay(delayTime);
+    return response.data;
   } catch (error) {
-    console.error(error);
+    await delay(delayTime);
+    return genericResponse("error", error);
   }
 };
 
-getAssetData();
+const getRSI = async (tokenSymbol) => {
+  const symbol = tokenSymbol + "/USDT";
+  try {
+    const response = await taapiApi.get("/rsi", {
+      params: {
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: "1h",
+      },
+    });
+    await delay(delayTime);
+    return response.data;
+  } catch (error) {
+    await delay(delayTime);
+    return genericResponse("error", error);
+  }
+};
+
+const getDEMA = async (tokenSymbol) => {
+  const symbol = tokenSymbol + "/USDT";
+  try {
+    const response = await taapiApi.get("/dema", {
+      params: {
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: "1h",
+      },
+    });
+    await delay(delayTime);
+    return response.data;
+  } catch (error) {
+    await delay(delayTime);
+    return genericResponse("error", error);
+  }
+};
+
+const getPVI = async (tokenSymbol) => {
+  const symbol = tokenSymbol + "/USDT";
+  try {
+    const response = await taapiApi.get("/pvi", {
+      params: {
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: "1h",
+      },
+    });
+    await delay(delayTime);
+    return response.data;
+  } catch (error) {
+    await delay(delayTime);
+    return genericResponse("error", error);
+  }
+};
+const getNVI = async (tokenSymbol) => {
+  const symbol = tokenSymbol + "/USDT";
+  try {
+    const response = await taapiApi.get("/nvi", {
+      params: {
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: "1h",
+      },
+    });
+    await delay(delayTime);
+    return response.data;
+  } catch (error) {
+    await delay(delayTime);
+    return genericResponse("error", error);
+  }
+};
+
+const getCryptocurrencyQuotes = async (symbols) => {
+  try {
+    const response = await cmcApi.get("/cryptocurrency/quotes/latest", {
+      params: {
+        symbol: symbols.join(","),
+        convert: "USD",
+      },
+    });
+
+    await delay(delayTime);
+    return response.data.data;
+  } catch (error) {
+    await delay(delayTime);
+    return genericResponse("error", error);
+  }
+};
+// getCryptocurrencyQuotes(['BTC', 'ETH', 'XRP']);
+
+module.exports = {
+  getSMA,
+  getRSI,
+  getDEMA,
+  getNVI,
+  getPVI,
+  getCryptocurrencyQuotes,
+};
