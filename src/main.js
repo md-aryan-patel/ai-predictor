@@ -3,7 +3,7 @@ const {
   getDEMA,
   getRSI,
   getCryptocurrencyQuotes,
-} = require("./api/data");
+} = require("./api/cryptoData");
 const { delay, data } = require("./helper");
 const { analyzeCryptoData } = require("./openai");
 
