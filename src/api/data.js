@@ -2,8 +2,6 @@ const axios = require("axios");
 const { genericResponse, delay } = require("../helper");
 require("dotenv").config();
 
-const delayTime = 5000;
-
 const taapiApi = axios.create({
   baseURL: "https://api.taapi.io",
 });
@@ -26,10 +24,9 @@ const getSMA = async (tokenSymbol) => {
         interval: "1h",
       },
     });
-    await delay(delayTime);
+
     return response.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
@@ -45,10 +42,9 @@ const getRSI = async (tokenSymbol) => {
         interval: "1h",
       },
     });
-    await delay(delayTime);
+
     return response.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
@@ -64,10 +60,9 @@ const getDEMA = async (tokenSymbol) => {
         interval: "1h",
       },
     });
-    await delay(delayTime);
+
     return response.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
@@ -83,10 +78,9 @@ const getPVI = async (tokenSymbol) => {
         interval: "1h",
       },
     });
-    await delay(delayTime);
+
     return response.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
@@ -101,10 +95,9 @@ const getNVI = async (tokenSymbol) => {
         interval: "1h",
       },
     });
-    await delay(delayTime);
+
     return response.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
@@ -118,10 +111,8 @@ const getCryptocurrencyQuotes = async (symbols) => {
       },
     });
 
-    await delay(delayTime);
     return response.data.data;
   } catch (error) {
-    await delay(delayTime);
     return genericResponse("error", error);
   }
 };
