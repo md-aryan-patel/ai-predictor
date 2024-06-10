@@ -12,7 +12,7 @@ Technical Data:
 - 24-hr SMA: ${data.technical.sma}
 - 24-hr EMA: ${data.technical.dema}
 - RSI: ${data.technical.rsi}
-- Volume: ${data.technical.volume}
+- Volume: ${data.technical.volume} 
 
 Fundamental Data:
 - Market Cap: ${data.fundamental.marketCap}
