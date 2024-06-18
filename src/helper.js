@@ -18,8 +18,6 @@ const data = {
     regulatoryNews: "Neutral, nothing much",
   },
   sentiment: {
-    socialMedia: "Neutral",
-    newsCoverage: "Neutral",
     fearGreedIndex: 65,
   },
 };

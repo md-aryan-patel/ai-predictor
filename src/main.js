@@ -3,14 +3,14 @@ const {
   getDEMA,
   getRSI,
   getCryptocurrencyQuotes,
+  getFearAndGreedIndex,
 } = require("./api/cryptoData");
 const { delay, data } = require("./helper");
 const { analyzeCryptoData } = require("./openai");
 
-const delayTime = 10000;
+const delayTime = 1000;
 
-const getDataFromApi = async () => {
-  const symbol = "XRP";
+const getDataFromApi = async (symbol) => {
   const smaResp = await getSMA(symbol);
   await delay(delayTime);
   const rsiResp = await getRSI(symbol);
@@ -22,12 +22,25 @@ const getDataFromApi = async () => {
 
   const volumeIn24hr = resp[0].quote.USD.volume_24h;
   const marketCap = resp[0].quote.USD.market_cap;
+  const activeAddresses = 1234567890;
+  const fearGreedIndex = getFearAndGreedIndex();
 
-  console.log({ symbol, smaResp, rsiResp, demaResp, volumeIn24hr, marketCap });
-  console.log(smaResp);
+  const data = {
+    symbol,
+    sma: smaResp.value,
+    rsi: rsiResp.value,
+    dema: demaResp.value,
+    volume: volumeIn24hr,
+    marketCap,
+    activeAddresses,
+    fearGreedIndex,
+  };
+  return data;
 };
 
 const main = async () => {
+  const data = await getDataFromApi("CAKE");
+  console.log(data);
   const analysedData = await analyzeCryptoData(data);
   console.log(analysedData.choices[0].message);
 };

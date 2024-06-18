@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { genericResponse, delay } = require("../helper");
+const { genericResponse } = require("../helper");
 require("dotenv").config();
 
 const taapiApi = axios.create({
@@ -118,6 +118,17 @@ const getCryptocurrencyQuotes = async (symbols) => {
 };
 // getCryptocurrencyQuotes(['BTC', 'ETH', 'XRP']);
 
+const getFearAndGreedIndex = async () => {
+  try {
+    const response = await axios.get("https://api.alternative.me/fng/");
+
+    return response.data.data[0].value;
+  } catch (error) {
+    console.error("Error fetching Fear and Greed Index:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getSMA,
   getRSI,
@@ -125,4 +136,5 @@ module.exports = {
   getNVI,
   getPVI,
   getCryptocurrencyQuotes,
+  getFearAndGreedIndex,
 };
