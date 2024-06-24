@@ -22,6 +22,10 @@ Fundamental Data:
 Sentiment Data:
 - Fear and Greed Index: ${data.fearGreedIndex}
 
+Last 24hr price movement:
+- price difference(in %): ${data.priceAppriciation.percentage}
+- trend: ${data.priceAppriciation.trend}
+
 Based on the above data, is the cryptocurrency movement likely to be bullish or bearish? Provide a brief explanation.
 `;
 

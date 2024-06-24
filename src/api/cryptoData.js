@@ -116,7 +116,6 @@ const getCryptocurrencyQuotes = async (symbols) => {
     return genericResponse("error", error);
   }
 };
-// getCryptocurrencyQuotes(['BTC', 'ETH', 'XRP']);
 
 const getFearAndGreedIndex = async () => {
   try {
@@ -124,8 +123,51 @@ const getFearAndGreedIndex = async () => {
 
     return response.data.data[0].value;
   } catch (error) {
-    console.error("Error fetching Fear and Greed Index:", error);
-    throw error;
+    return genericResponse("error", error);
+  }
+};
+
+const getPriceAppirciationInPercentage = async (
+  symbol,
+  interval = "1h",
+  backtrack = 24
+) => {
+  const oneHrPrice = await fetchCoinPriceWithInterval(symbol, interval);
+  const oneDayPrice = await fetchCoinPriceWithInterval(
+    symbol,
+    interval,
+    backtrack
+  );
+
+  const priceDifference = oneHrPrice - oneDayPrice;
+  const trend = priceDifference > 0 ? "up" : "down";
+  const percentage = (priceDifference / oneDayPrice) * 100;
+  return {
+    trend,
+    percentage,
+  };
+};
+
+const fetchCoinPriceWithInterval = async (
+  tokenSymbol,
+  interval,
+  backtrack = 0
+) => {
+  const symbol = tokenSymbol + "/USDT";
+  try {
+    const response = await taapiApi.get("/price", {
+      params: {
+        secret: process.env.TAAPI_KEY,
+        exchange: "binance",
+        symbol: symbol,
+        interval: interval,
+        backtrack: backtrack,
+      },
+    });
+
+    return response.data.value;
+  } catch (error) {
+    return genericResponse("error", error);
   }
 };
 
@@ -137,4 +179,5 @@ module.exports = {
   getPVI,
   getCryptocurrencyQuotes,
   getFearAndGreedIndex,
+  getPriceAppirciationInPercentage,
 };

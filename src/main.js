@@ -4,6 +4,7 @@ const {
   getRSI,
   getCryptocurrencyQuotes,
   getFearAndGreedIndex,
+  getPriceAppirciationInPercentage,
 } = require("./api/cryptoData");
 const { delay, data } = require("./helper");
 const { analyzeCryptoData } = require("./openai");
@@ -24,6 +25,7 @@ const getDataFromApi = async (symbol) => {
   const marketCap = resp[0].quote.USD.market_cap;
   const activeAddresses = 1234567890;
   const fearGreedIndex = await getFearAndGreedIndex();
+  const priceAppriciation = await getPriceAppirciationInPercentage(symbol);
 
   const data = {
     symbol,
@@ -34,6 +36,7 @@ const getDataFromApi = async (symbol) => {
     marketCap,
     activeAddresses,
     fearGreedIndex,
+    priceAppriciation,
   };
   return data;
 };
