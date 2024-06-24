@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 const analyzeCryptoData = async (data) => {
   const prompt = `
-Given the following data for a cryptocurrency: ${data.symbol}, analyze whether the movement is likely to be bullish or bearish:
+Given the following data for a cryptocurrency: ${data.symbol}, analyze whether to buy or sell the token, based on the outcome promopt, is it right time to sell, hold, or right time to buy:
 
 Technical Data:
 - 24-hr SMA: ${data.sma}
@@ -26,7 +26,7 @@ Last 24hr price movement:
 - price difference(in %): ${data.priceAppriciation.percentage}
 - trend: ${data.priceAppriciation.trend}
 
-Based on the above data, is the cryptocurrency movement likely to be bullish or bearish? Provide a brief explanation.
+Based on the above data, is the cryptocurrency movement likely to be bullish or bearish and also tell is likely to buy or not? Provide a brief explanation.
 `;
 
   const response = await openai.chat.completions.create({
