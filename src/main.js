@@ -23,7 +23,7 @@ const getDataFromApi = async (symbol) => {
   const volumeIn24hr = resp[0].quote.USD.volume_24h;
   const marketCap = resp[0].quote.USD.market_cap;
   const activeAddresses = 1234567890;
-  const fearGreedIndex = getFearAndGreedIndex();
+  const fearGreedIndex = await getFearAndGreedIndex();
 
   const data = {
     symbol,
