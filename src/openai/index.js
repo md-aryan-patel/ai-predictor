@@ -1,4 +1,5 @@
 const { OpenAI } = require("openai");
+const { prompts, returnPromptWithData } = require("../helper");
 require("dotenv").config();
 
 const openai = new OpenAI({
@@ -6,35 +7,14 @@ const openai = new OpenAI({
 });
 
 const analyzeCryptoData = async (data) => {
-  const prompt = `
-Given the following data for a cryptocurrency: ${data.symbol}, analyze whether to buy or sell the token, based on the outcome promopt, is it right time to sell, hold, or right time to buy:
-
-Technical Data:
-- 24-hr SMA: ${data.sma}
-- 24-hr EMA: ${data.dema}
-- RSI: ${data.rsi}
-- Volume: ${data.volume} 
-
-Fundamental Data:
-- Market Cap: ${data.marketCap}
-- Active Addresses: ${data.activeAddresses}
-
-Sentiment Data:
-- Fear and Greed Index: ${data.fearGreedIndex}
-
-Last 24hr price movement:
-- price difference(in %): ${data.priceAppriciation.percentage}
-- trend: ${data.priceAppriciation.trend}
-
-Based on the above data, provide just a single word answer no extra text: sell, hold or buy.
-`;
+  const prompt = returnPromptWithData(data);
 
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo-16k",
     messages: [{ role: "system", content: prompt }],
   });
 
-  return response;
+  return { prompt, response: response.choices[0].message.content };
 };
 
 module.exports = { analyzeCryptoData };

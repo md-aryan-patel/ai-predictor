@@ -12,12 +12,21 @@ const main = async () => {
 };
 
 const startScheduledJob = async (symbol) => {
-  // chron syntex for one hour: "0 0 * * *"
-  cron.schedule("* * * * *", async () => {
+  // chron syntex for one hour: "0 * * * *"
+  let count = 0;
+  const maxHour = 24;
+  const task = cron.schedule("* * * * *", async () => {
+    count++;
     console.log("___aggregating hourly data___");
     await getHourlyData(symbol);
     const data = await readDataFromFile();
     await downloadXlsx(data);
+
+    if (count >= maxHour) {
+      console.log("___task completed after 24hr___");
+      task.stop();
+      process.exit();
+    }
   });
 };
 

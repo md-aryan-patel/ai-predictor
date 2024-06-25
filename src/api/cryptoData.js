@@ -143,13 +143,10 @@ const fetchCoinPriceWithInterval = async (
 const getHourlyData = async (symbol) => {
   let data = await getDataFromApi(symbol);
   const analysedData = await analyzeCryptoData(data);
-  data["analysedData"] = analysedData.choices[0].message.content;
+  data["reponse"] = analysedData.response;
+  data["prompt"] = analysedData.prompt;
   await saveDaataToFile(data);
 };
-
-// cron.schedule("0 * * * *", () => {
-//   myHourlyFunction();
-// });
 
 const getDataFromApi = async (symbol) => {
   const smaResp = await getSMA(symbol);
