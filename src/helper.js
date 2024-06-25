@@ -1,25 +1,15 @@
+let json2xls = require("json2xls");
+const { saveXslx } = require("./readers");
+
 const genericResponse = (type, msg) => {
   return { Type: type, Message: msg };
 };
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const data = {
-  technical: {
-    sma: 71006.8946666666,
-    rsi: 60.358892949257324,
-    dema: 71095.06887239758,
-    volume: 13361119418.41706,
-  },
-  fundamental: {
-    marketCap: 458912304591.04926,
-    activeAddresses: 1234567890,
-    transactionVolume: 1234567890,
-    regulatoryNews: "Neutral, nothing much",
-  },
-  sentiment: {
-    fearGreedIndex: 65,
-  },
+const downloadXlsx = async (data) => {
+  let xls = json2xls(data);
+  saveXslx(xls);
 };
 
-module.exports = { genericResponse, delay, data };
+module.exports = { genericResponse, delay, downloadXlsx };

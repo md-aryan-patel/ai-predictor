@@ -26,7 +26,7 @@ Last 24hr price movement:
 - price difference(in %): ${data.priceAppriciation.percentage}
 - trend: ${data.priceAppriciation.trend}
 
-Based on the above data, is the cryptocurrency movement likely to be bullish or bearish and also tell is likely to buy or not? Provide a brief explanation.
+Based on the above data, provide just a single word answer no extra text: sell, hold or buy.
 `;
 
   const response = await openai.chat.completions.create({

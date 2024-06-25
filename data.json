@@ -1,0 +1,83 @@
+[
+  {
+    "symbol": "BTC",
+    "sma": 61236.105333333326,
+    "rsi": 48.32630797040043,
+    "dema": 60305.3877562776,
+    "volume": 42305308039.95604,
+    "marketCap": 1204516337993.025,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0591459017706946 },
+    "analysedData": "sell"
+  },
+  {
+    "symbol": "BTC",
+    "volume": 42305308039.95604,
+    "marketCap": 1204516337993.025,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": null },
+    "analysedData": "sell"
+  },
+  {
+    "symbol": "BTC",
+    "sma": 61236.90499999999,
+    "rsi": 48.59588834187764,
+    "dema": 60306.63770424847,
+    "volume": 42290958880.52057,
+    "marketCap": 1204426934343.813,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0335710279625077 },
+    "analysedData": "Hold"
+  },
+  {
+    "symbol": "BTC",
+    "sma": 61236.885999999984,
+    "rsi": 48.5882404224416,
+    "dema": 60306.56652838999,
+    "volume": 42299631354.73041,
+    "marketCap": 1204448531505.6643,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0399166733434853 },
+    "analysedData": "sell"
+  },
+  {
+    "symbol": "BTC",
+    "sma": 61237.105333333326,
+    "rsi": 48.67638867178584,
+    "dema": 60307.38817251069,
+    "volume": 42300189087.49036,
+    "marketCap": 1204561172496.9673,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0399166733434853 },
+    "analysedData": "sell"
+  },
+  {
+    "symbol": "BTC",
+    "sma": 61237.438666666654,
+    "rsi": 48.80977532185807,
+    "dema": 60308.63562308301,
+    "volume": 42300189087.49036,
+    "marketCap": 1204561172496.9673,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0238762919637847 },
+    "analysedData": "sell"
+  },
+  {
+    "symbol": "BTC",
+    "sma": 61237.77199999999,
+    "rsi": 48.94247044311531,
+    "dema": 60309.88432235461,
+    "volume": 42281493859.48312,
+    "marketCap": 1204810921602.0679,
+    "activeAddresses": 1234567890,
+    "fearGreedIndex": "30",
+    "priceAppriciation": { "trend": "down", "percentage": -2.0078519349411104 },
+    "analysedData": "sell"
+  }
+]

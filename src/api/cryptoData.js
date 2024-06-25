@@ -1,5 +1,9 @@
 const axios = require("axios");
-const { genericResponse } = require("../helper");
+const { genericResponse, delay } = require("../helper");
+const { saveDaataToFile } = require("../readers/");
+const { analyzeCryptoData } = require("../openai");
+
+const delayTime = 1000;
 require("dotenv").config();
 
 const taapiApi = axios.create({
@@ -53,41 +57,6 @@ const getDEMA = async (tokenSymbol) => {
   const symbol = tokenSymbol + "/USDT";
   try {
     const response = await taapiApi.get("/dema", {
-      params: {
-        secret: process.env.TAAPI_KEY,
-        exchange: "binance",
-        symbol: symbol,
-        interval: "1h",
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    return genericResponse("error", error);
-  }
-};
-
-const getPVI = async (tokenSymbol) => {
-  const symbol = tokenSymbol + "/USDT";
-  try {
-    const response = await taapiApi.get("/pvi", {
-      params: {
-        secret: process.env.TAAPI_KEY,
-        exchange: "binance",
-        symbol: symbol,
-        interval: "1h",
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    return genericResponse("error", error);
-  }
-};
-const getNVI = async (tokenSymbol) => {
-  const symbol = tokenSymbol + "/USDT";
-  try {
-    const response = await taapiApi.get("/nvi", {
       params: {
         secret: process.env.TAAPI_KEY,
         exchange: "binance",
@@ -171,13 +140,47 @@ const fetchCoinPriceWithInterval = async (
   }
 };
 
+const getHourlyData = async (symbol) => {
+  let data = await getDataFromApi(symbol);
+  const analysedData = await analyzeCryptoData(data);
+  data["analysedData"] = analysedData.choices[0].message.content;
+  await saveDaataToFile(data);
+};
+
+// cron.schedule("0 * * * *", () => {
+//   myHourlyFunction();
+// });
+
+const getDataFromApi = async (symbol) => {
+  const smaResp = await getSMA(symbol);
+  await delay(delayTime);
+  const rsiResp = await getRSI(symbol);
+  await delay(delayTime);
+  const demaResp = await getDEMA(symbol);
+  await delay(delayTime);
+  const getccquotes = await getCryptocurrencyQuotes([symbol]);
+  const resp = getccquotes[symbol];
+
+  const volumeIn24hr = resp[0].quote.USD.volume_24h;
+  const marketCap = resp[0].quote.USD.market_cap;
+  const activeAddresses = 1234567890;
+  const fearGreedIndex = await getFearAndGreedIndex();
+  const priceAppriciation = await getPriceAppirciationInPercentage(symbol);
+
+  const data = {
+    symbol,
+    sma: smaResp.value,
+    rsi: rsiResp.value,
+    dema: demaResp.value,
+    volume: volumeIn24hr,
+    marketCap,
+    activeAddresses,
+    fearGreedIndex,
+    priceAppriciation,
+  };
+  return data;
+};
+
 module.exports = {
-  getSMA,
-  getRSI,
-  getDEMA,
-  getNVI,
-  getPVI,
-  getCryptocurrencyQuotes,
-  getFearAndGreedIndex,
-  getPriceAppirciationInPercentage,
+  getHourlyData,
 };

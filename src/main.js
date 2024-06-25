@@ -1,51 +1,24 @@
-const {
-  getSMA,
-  getDEMA,
-  getRSI,
-  getCryptocurrencyQuotes,
-  getFearAndGreedIndex,
-  getPriceAppirciationInPercentage,
-} = require("./api/cryptoData");
-const { delay, data } = require("./helper");
-const { analyzeCryptoData } = require("./openai");
-
-const delayTime = 1000;
-
-const getDataFromApi = async (symbol) => {
-  const smaResp = await getSMA(symbol);
-  await delay(delayTime);
-  const rsiResp = await getRSI(symbol);
-  await delay(delayTime);
-  const demaResp = await getDEMA(symbol);
-  await delay(delayTime);
-  const getccquotes = await getCryptocurrencyQuotes([symbol]);
-  const resp = getccquotes[symbol];
-
-  const volumeIn24hr = resp[0].quote.USD.volume_24h;
-  const marketCap = resp[0].quote.USD.market_cap;
-  const activeAddresses = 1234567890;
-  const fearGreedIndex = await getFearAndGreedIndex();
-  const priceAppriciation = await getPriceAppirciationInPercentage(symbol);
-
-  const data = {
-    symbol,
-    sma: smaResp.value,
-    rsi: rsiResp.value,
-    dema: demaResp.value,
-    volume: volumeIn24hr,
-    marketCap,
-    activeAddresses,
-    fearGreedIndex,
-    priceAppriciation,
-  };
-  return data;
-};
+const { getHourlyData } = require("./api/cryptoData");
+const cron = require("node-cron");
+const { downloadXlsx } = require("./helper");
+const { readDataFromFile } = require("./readers");
+require("dotenv").config();
 
 const main = async () => {
-  const data = await getDataFromApi("CAKE");
-  console.log(data);
-  const analysedData = await analyzeCryptoData(data);
-  console.log(analysedData.choices[0].message);
+  const args = process.argv.slice(2);
+  let symbol = args[0] ? args[0] : process.env.DEFAULT_TOKEN;
+  console.log(`Your aggreegate symbol is ${symbol}`);
+  startScheduledJob(symbol);
+};
+
+const startScheduledJob = async (symbol) => {
+  // chron syntex for one hour: "0 0 * * *"
+  cron.schedule("* * * * *", async () => {
+    console.log("___aggregating hourly data___");
+    await getHourlyData(symbol);
+    const data = await readDataFromFile();
+    await downloadXlsx(data);
+  });
 };
 
 main().catch((err) => {
