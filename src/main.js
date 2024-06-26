@@ -15,7 +15,7 @@ const startScheduledJob = async (symbol) => {
   // chron syntex for one hour: "0 * * * *"
   let count = 0;
   const maxHour = 24;
-  const task = cron.schedule("* * * * *", async () => {
+  const task = cron.schedule("0 * * * *", async () => {
     count++;
     console.log("___aggregating hourly data___");
     await getHourlyData(symbol);
