@@ -2,13 +2,15 @@ const { getHourlyData } = require("./api/cryptoData");
 const cron = require("node-cron");
 const { downloadXlsx } = require("./helper");
 const { readDataFromFile } = require("./readers");
+const { analyzeCryptoData } = require("./openai");
 require("dotenv").config();
 
 const main = async () => {
   const args = process.argv.slice(2);
   let symbol = args[0] ? args[0] : process.env.DEFAULT_TOKEN;
   console.log(`Your aggreegate symbol is ${symbol}`);
-  startScheduledJob(symbol);
+  // startScheduledJob(symbol);
+  await getSimilarTokenData(symbol);
 };
 
 const startScheduledJob = async (symbol) => {
@@ -28,6 +30,13 @@ const startScheduledJob = async (symbol) => {
       process.exit();
     }
   });
+};
+
+const getSimilarTokenData = async (symbol) => {
+  console.log("Getting similar tokens");
+  const data = await getHourlyData(symbol);
+  const resp = await analyzeCryptoData(data);
+  console.log(resp);
 };
 
 main().catch((err) => {

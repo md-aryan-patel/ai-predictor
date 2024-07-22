@@ -1,38 +1,70 @@
 const { OpenAI } = require("openai");
 const { returnPromptWithData } = require("../helper");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
 const openai = new OpenAI({
   apiKey: process.env.SECREAT_KEY,
 });
 
+async function trainModel() {
+  try {
+    const filePath = path.join(__dirname, "../../data.json");
+
+    // Upload the training file
+    const file = await openai.files.create({
+      file: fs.createReadStream(filePath),
+      purpose: "fine-tune",
+    });
+    console.log("File uploaded successfully. File ID:", file.id);
+
+    const fineTuningJob = await openai.fineTuning.jobs.create({
+      training_file: file.id,
+      model: "gpt-3.5-turbo",
+    });
+
+    console.log("Fine-tuning job created. Job ID:", fineTuningJob.id);
+
+    // Monitor the fine-tuning progress
+    let status = await openai.fineTuning.jobs.retrieve(fineTuningJob.id);
+    console.log("Status:", status.status);
+
+    // Wait for the fine-tuning to complete
+    while (status.status !== "succeeded" && status.status !== "failed") {
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for 5 seconds
+      status = await openai.fineTuning.jobs.retrieve(fineTuningJob.id);
+      console.log("Status:", status.status);
+    }
+
+    if (status.status === "succeeded") {
+      console.log(
+        "Fine-tuning completed. Model name:",
+        status.fine_tuned_model
+      );
+      return status.fine_tuned_model;
+    } else {
+      console.error("Fine-tuning failed.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}
+
 const analyzeCryptoData = async (data) => {
   // const prompt = returnPromptWithData(data);
-
-  const prompt = `{
-  symbol: 'CAKE',
-  sma: 1.7843333333333335,
-  rsi: 53.914229430527236,
-  dema: 1.7974000549504991,
-  volume: 25657824.36195749,
-  percentageChange1hr: -0.62091726,
-  percentageChange24hr: 3.15090321,
-  percentageChange7d: -14.03884663,
-  marketCap: 484341203.0476364,
-  activeAddresses: 1234567890,
-  fearGreedIndex: '27',
-  priceAppriciation: { trend: 'up', percentage: 2.6225769669327272 },
-  news: '',
-  fdv: 812106274.26
-} The provided data is based on current/live market based on the data provided can you give me the   
-similar tokens name and values from current/live market, state the date of from which you have aggregated the similar tokens data`;
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [{ role: "system", content: prompt }],
-  });
-
-  return { prompt, response: response.choices[0].message.content };
+  // const results = [];
+  const trainedModel = await trainModel();
+  console.log(res);
 };
+
+(async () => {
+  const data = await trainModel();
+  console.log(data);
+})().catch((err) => {
+  console.log(err);
+});
 
 module.exports = { analyzeCryptoData };

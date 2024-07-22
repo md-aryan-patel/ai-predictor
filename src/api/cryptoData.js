@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { genericResponse, delay } = require("../helper");
-const { saveDaataToFile } = require("../readers/");
+const { saveDaataToFile, saveDataToResponse } = require("../readers/");
 const { analyzeCryptoData } = require("../openai");
 
 const delayTime = 1000;
@@ -143,14 +143,6 @@ const fetchCoinPriceWithInterval = async (
   }
 };
 
-const getHourlyData = async (symbol) => {
-  let data = await getDataFromApi(symbol);
-  const analysedData = await analyzeCryptoData(data);
-  data["reponse"] = analysedData.response;
-  data["prompt"] = analysedData.prompt;
-  await saveDaataToFile(data);
-};
-
 const fetchLatestNews = async (token) => {
   token = token + " token, cryptocurrency";
   try {
@@ -211,8 +203,6 @@ const getDataFromApi = async (symbol) => {
   const resp = getccquotes[symbol];
   const quote = resp[0].quote.USD;
 
-  console.log(" Got basic data");
-
   const volumeIn24hr = quote.volume_24h;
   const percentageChange1hr = quote.percent_change_1h;
   const percentageChange24hr = quote.percent_change_24h;
@@ -222,17 +212,15 @@ const getDataFromApi = async (symbol) => {
   const activeAddresses = 1234567890;
   const fearGreedIndex = await getFearAndGreedIndex();
   await delay(delayTime);
-  console.log(" Got FGI");
   const priceAppriciation = await getPriceAppirciationInPercentage(symbol);
   await delay(delayTime);
-  console.log(" Got price appriciation");
-  /*
-  const result = await fetchLatestNews(symbol);
-  let news = "";
-  if (result.length > 0) {
-    news = result[0].description;
-  }
- */
+
+  // const result = await fetchLatestNews(symbol);
+  // let news = "";
+  // if (result.length > 0) {
+  //   news = result[0].description;
+  // }
+
   const respData = {
     symbol,
     sma: smaResp.value,
@@ -251,43 +239,15 @@ const getDataFromApi = async (symbol) => {
   return respData;
 };
 
-const main = async () => {
-  let rank = 8748;
-  while (true) {
-    let resData;
-    try {
-      let symbol;
-      try {
-        await delay(delayTime);
-        symbol = await getTokenByMarketCap(rank);
-      } catch (err) {
-        console.log(err);
-        continue;
-      }
-      if (symbol === null) continue;
-      console.log(`Got Token symbol ${symbol}`);
-      resData = await getDataFromApi(symbol);
-      resData["rank"] = rank + 1;
-      console.log("Got data from symbol");
-    } catch (err) {
-      console.log(err);
-      rank++;
-      continue;
-    }
-    saveDaataToFile(resData);
-    rank++;
-  }
+const getHourlyData = async (symbol) => {
+  let data = await getDataFromApi(symbol);
+  const analysedData = await analyzeCryptoData(data);
+  data["reponse"] = analysedData.response;
+  data["prompt"] = analysedData.prompt;
+  console.log("Got data...");
+  // await saveDataToResponse(data);
+  return data;
 };
-
-const temp = async () => {
-  const res = await getTokenByMarketCap(12);
-  console.log(res);
-};
-
-main().catch((err) => {
-  console.log(err);
-  process.exitCode = 1;
-});
 
 module.exports = {
   getHourlyData,

@@ -15,8 +15,21 @@ const saveDaataToFile = async (data) => {
   });
 };
 
+const saveDataToResponse = async (data) => {
+  fs.writeFile("response.json", JSON.stringify(data), (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+};
+
 const saveXslx = async (xls) => {
   fs.writeFileSync("data.xlsx", xls, "binary");
 };
 
-module.exports = { saveDaataToFile, readDataFromFile, saveXslx };
+module.exports = {
+  saveDaataToFile,
+  readDataFromFile,
+  saveXslx,
+  saveDataToResponse,
+};
