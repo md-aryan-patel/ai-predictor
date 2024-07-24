@@ -1,8 +1,11 @@
 const { getHourlyData } = require("./api/cryptoData");
 const cron = require("node-cron");
-const { downloadXlsx } = require("./helper");
+const { downloadXlsx, convertJsonToJsonl } = require("./helper");
 const { readDataFromFile } = require("./readers");
+const tokenData = require("../data.json");
 const { analyzeCryptoData } = require("./openai");
+const path = require("path");
+const writeJsonl = require("json-to-jsonl");
 require("dotenv").config();
 
 const main = async () => {
@@ -32,7 +35,19 @@ const startScheduledJob = async (symbol) => {
   });
 };
 
+const createPrompt = async () => {
+  await convertJsonToJsonl(tokenData);
+};
+
+const writeToJsonl = async () => {
+  const relativePath = path.join(__dirname, "../crypto_data.json");
+  console.log(relativePath);
+  writeJsonl(relativePath);
+};
+
 const getSimilarTokenData = async (symbol) => {
+  // convertJsonToJsonl(tokenData);
+  // await writeToJsonl();
   console.log("Getting similar tokens");
   const data = await getHourlyData(symbol);
   const resp = await analyzeCryptoData(data);

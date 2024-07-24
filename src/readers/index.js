@@ -23,6 +23,14 @@ const saveDataToResponse = async (data) => {
   });
 };
 
+const saveDataToCryptoResp = async (data) => {
+  fs.writeFile("crypto_data.json", JSON.stringify(data), (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+};
+
 const saveXslx = async (xls) => {
   fs.writeFileSync("data.xlsx", xls, "binary");
 };
@@ -32,4 +40,5 @@ module.exports = {
   readDataFromFile,
   saveXslx,
   saveDataToResponse,
+  saveDataToCryptoResp,
 };
