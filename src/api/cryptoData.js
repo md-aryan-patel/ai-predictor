@@ -138,7 +138,6 @@ const fetchCoinPriceWithInterval = async (
         backtrack: backtrack,
       },
     });
-    console.log(response.data.value);
     return response.data.value;
   } catch (error) {
     return genericResponse("error", error);
@@ -156,6 +155,10 @@ const getDataFromApi = async (symbol) => {
   const getccquotes = await getCryptocurrencyQuotes([symbol]);
   await delay(delayTime);
   const resp = getccquotes[symbol];
+  console.log(`Symbol: ${symbol}`);
+  if (resp.length === 0) {
+    return null;
+  }
   const quote = resp[0].quote.USD;
 
   const volumeIn24hr = quote.volume_24h;

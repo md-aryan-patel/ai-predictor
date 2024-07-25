@@ -1,7 +1,7 @@
 const { getHourlyData, getDataFromApi } = require("./api/cryptoData");
 const cron = require("node-cron");
 const { downloadXlsx, convertJsonToJsonl } = require("./helper");
-const { readDataFromFile } = require("./readers");
+const { readDataFromFile, saveDataToResponse } = require("./readers");
 const tokenData = require("../data.json");
 const { analyzeCryptoData, giveSellPressure } = require("./openai");
 const path = require("path");
@@ -61,10 +61,12 @@ const getAnalyseTokenData = async (baseSymbol, symbols, mainTokenData) => {
   for (let i = 0; i < similarTokens.similar_tokens.length; i++) {
     const token = similarTokens.similar_tokens[i];
     const data = await getDataFromApi(token);
+    if (data === null) continue;
     tokenData.push(data);
   }
   const resp = await giveSellPressure(tokenData, mainTokenData);
-  console.log(resp.message.content);
+  console.log(`writing data...`);
+  await saveDataToResponse(resp);
 };
 
 main().catch((err) => {

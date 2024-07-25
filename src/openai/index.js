@@ -76,12 +76,13 @@ const analyzeCryptoData = async (data) => {
 };
 
 const giveSellPressure = async (data, mainTokenData) => {
+  console.log("generating report...");
   const prompt = resturnPromptWithMultipleData(data, mainTokenData);
   const completion = await openai.chat.completions.create({
     messages: [{ role: "system", content: prompt }],
     model: "ft:gpt-3.5-turbo-0125:personal::9oA5648D",
   });
-  return completion.choices[0];
+  return { response: completion.choices[0].message.content, prompt };
 };
 
 // getFintuneJobState();
