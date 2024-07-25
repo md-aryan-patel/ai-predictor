@@ -1,5 +1,8 @@
 const { OpenAI } = require("openai");
-const { returnPromptWithData } = require("../helper");
+const {
+  returnPromptWithData,
+  resturnPromptWithMultipleData,
+} = require("../helper");
 const fs = require("fs");
 const path = require("path");
 const { get } = require("http");
@@ -72,7 +75,16 @@ const analyzeCryptoData = async (data) => {
   return completion.choices[0];
 };
 
+const giveSellPressure = async (data, mainTokenData) => {
+  const prompt = resturnPromptWithMultipleData(data, mainTokenData);
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "system", content: prompt }],
+    model: "ft:gpt-3.5-turbo-0125:personal::9oA5648D",
+  });
+  return completion.choices[0];
+};
+
 // getFintuneJobState();
 // getFinetunejobs();
 
-module.exports = { analyzeCryptoData, getFintuneJobState };
+module.exports = { analyzeCryptoData, getFintuneJobState, giveSellPressure };

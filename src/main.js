@@ -1,9 +1,9 @@
-const { getHourlyData } = require("./api/cryptoData");
+const { getHourlyData, getDataFromApi } = require("./api/cryptoData");
 const cron = require("node-cron");
 const { downloadXlsx, convertJsonToJsonl } = require("./helper");
 const { readDataFromFile } = require("./readers");
 const tokenData = require("../data.json");
-const { analyzeCryptoData } = require("./openai");
+const { analyzeCryptoData, giveSellPressure } = require("./openai");
 const path = require("path");
 const writeJsonl = require("json-to-jsonl");
 require("dotenv").config();
@@ -51,7 +51,20 @@ const getSimilarTokenData = async (symbol) => {
   console.log("Getting similar tokens");
   const data = await getHourlyData(symbol);
   const resp = await analyzeCryptoData(data);
-  console.log(resp);
+  getAnalyseTokenData(symbol, resp.message.content, data);
+};
+
+const getAnalyseTokenData = async (baseSymbol, symbols, mainTokenData) => {
+  const similarTokens = await JSON.parse(symbols);
+  console.log(similarTokens.similar_tokens);
+  let tokenData = [];
+  for (let i = 0; i < similarTokens.similar_tokens.length; i++) {
+    const token = similarTokens.similar_tokens[i];
+    const data = await getDataFromApi(token);
+    tokenData.push(data);
+  }
+  const resp = await giveSellPressure(tokenData, mainTokenData);
+  console.log(resp.message.content);
 };
 
 main().catch((err) => {

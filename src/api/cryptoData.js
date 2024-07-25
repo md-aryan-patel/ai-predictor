@@ -104,7 +104,9 @@ const getPriceAppirciationInPercentage = async (
   interval = "1h",
   backtrack = 24
 ) => {
+  await delay(delayTime * 3);
   const oneHrPrice = await fetchCoinPriceWithInterval(symbol, interval);
+  await delay(delayTime * 3);
   const oneDayPrice = await fetchCoinPriceWithInterval(
     symbol,
     interval,
@@ -136,62 +138,15 @@ const fetchCoinPriceWithInterval = async (
         backtrack: backtrack,
       },
     });
-
+    console.log(response.data.value);
     return response.data.value;
   } catch (error) {
     return genericResponse("error", error);
   }
 };
 
-const fetchLatestNews = async (token) => {
-  token = token + " token, cryptocurrency";
-  try {
-    const response = await axios.get("https://newsdata.io/api/1/latest", {
-      params: {
-        apikey: process.env.NEW_API,
-        q: token,
-        language: "en",
-      },
-    });
-
-    return response.data.results;
-  } catch (error) {
-    // Handle any errors
-    console.error("Error fetching news:", error);
-    throw error;
-  }
-};
-
-async function getTokenByMarketCap(rank) {
-  const url =
-    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
-  const params = {
-    start: rank,
-    limit: 1,
-    convert: "USD",
-  };
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        "X-CMC_PRO_API_KEY": process.env.CMC_KEY,
-      },
-      params: params,
-    });
-
-    if (response.data.data && response.data.data.length > 0) {
-      const sym = response.data.data[0].symbol;
-      return sym;
-    } else {
-      throw new Error("No data returned for the given rank");
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
-
 const getDataFromApi = async (symbol) => {
+  await delay(delayTime * 3);
   const smaResp = await getSMA(symbol);
   await delay(delayTime);
   const rsiResp = await getRSI(symbol);
@@ -214,12 +169,6 @@ const getDataFromApi = async (symbol) => {
   await delay(delayTime);
   const priceAppriciation = await getPriceAppirciationInPercentage(symbol);
   await delay(delayTime);
-
-  // const result = await fetchLatestNews(symbol);
-  // let news = "";
-  // if (result.length > 0) {
-  //   news = result[0].description;
-  // }
 
   const respData = {
     symbol,
@@ -251,4 +200,5 @@ const getHourlyData = async (symbol) => {
 
 module.exports = {
   getHourlyData,
+  getDataFromApi,
 };

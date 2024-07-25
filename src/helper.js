@@ -21,6 +21,60 @@ const returnPromptWithData = (data) => {
   return prompt;
 };
 
+const resturnPromptWithMultipleData = (d, mainTokenData) => {
+  let prompt =
+    "This is the subject Token data " +
+    JSON.stringify(mainTokenData) +
+    " and below is the data of the similar token\n";
+  for (let i = 0; i < d.length; i++) {
+    let p;
+    let data = d[i];
+    const promptTemplate = `Analyze ${data.symbol} cryptocurrency (${data.sma}), EMA (${data.dema}), RSI (${data.rsi}), volume (${data.volume}),
+  percentageChange1hr (${data.percentageChange1hr}), percentageChange24hr (${data.perpercentageChange24hr}), percentageChange7d (${data.percentageChange7d}) market cap (${data.marketCap}), active addresses (${data.activeAddresses}), FDV (${data.fdv}) Fear/Greed Index (${data.fearGreedIndex}), price Appriciation (${data.priceAppriciation.percentage}%, ${data.priceAppriciation.trend}).`;
+    p = promptTemplate.replace(/{{(.*?)}}/g, (match, p1) => data[p1]);
+    prompt += p + "\n";
+  }
+  const q = `based on this Calculate Authenticity Percentage:
+        ◦ Based on the comparison, determine the percentage of the subject token's price appreciation that can be considered authentic.
+        ◦ If the subject token appreciated by 100%, and similar tokens and the market appreciated by an average of 20%, calculate the authenticity as 20% of the 100% appreciation, which is 20%.
+        
+        Recommend Sell Pressure:
+        ◦ Based on the analysis, recommend whether adding sell pressure to the market is advisable at the moment.
+        ◦ Provide a percentage of how much sell pressure can be applied based on the authentic appreciation determined.
+      
+        Generate Report:
+        ◦ Provide a detailed report with the findings, including charts and graphs to visualize the data.
+        ◦ Highlight the percentage of authentic appreciation versus artificial pumping, market trends, and recommendations for sell pressure.
+
+        Example Calculation:
+
+        For example: Token A appreciated by 100% in the last 24 hours.
+
+        Similar tokens with the same market cap appreciated by an average of 20%.
+        The overall market trend showed an average appreciation of 20%.
+        The Cap Rate and FDV indicate a reasonable rate of return and potential dilution impact.
+        Authenticity Percentage:
+        Authentic Appreciation = Average Similar Token Appreciation + Overall Market Appreciation
+
+        Authentic Appreciation = Average Similar Token Appreciation + Overall Market Appreciation
+
+        Authentic Appreciation = 20%+20%
+        Authentic Appreciation = 20%
+
+        Calculating the Percentage of Authentic Appreciation:
+        Percentage of Authentic Appreciation= (20% / 100%)*100
+
+        Percentage of Authentic Appreciation = 20%
+
+        Therefore, 20% of the 100% appreciation is considered authentic.
+
+above is just the example of how to calculate the authentic appreciation for a token and similar tokens, derive the formulae Take price appriciation percentage of a perticular token from price Appriciation and calculate the. authentic appreciation for the token and similar tokens.
+calculate the percentage of authentic appreciation also show calculation steps for all the tokens provided.
+`;
+  prompt += q;
+  return prompt;
+};
+
 const convertJsonToJsonl = async (data) => {
   try {
     if (!Array.isArray(data)) {
@@ -112,4 +166,5 @@ module.exports = {
   downloadXlsx,
   returnPromptWithData,
   convertJsonToJsonl,
+  resturnPromptWithMultipleData,
 };
